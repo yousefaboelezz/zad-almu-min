@@ -1,0 +1,1455 @@
+/* ==========================================================
+   زاد المؤمن - ملف التنسيقات والجماليات (style.css)
+   تصميم حديث، روحاني وهادئ، مستوحى من الهوية الإسلامية الراقية
+   ألوان طبيعية: أخضر مريمي (Sage Green)، زيتوني هادئ، عاجي دافئ،
+   ولمسات ذهبية متوازنة ومريحة للعين في القراءة الممتدة
+   يدعم الوضع الفاتح والوضع الهادئ بدون أي أطر عمل خارجية
+   ========================================================== */
+
+/* 1. المتغيرات اللونية والتصميمية (CSS Custom Properties) */
+:root {
+  /* الخطوط المعتمدة */
+  --font-arabic-text: 'Amiri', 'Traditional Arabic', serif, Tahoma;
+  --font-ui: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* قياسات ونسب التدوير */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* حركات وتأثيرات ناعمة */
+  --transition-fast: 0.12s cubic-bezier(0.2, 0.8, 0.4, 1);
+  --transition-normal: 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* -------------------------------------------------------------
+   الوضع الفاتح (Light Mode):
+   - خلفيات عاجية دافئة كريمية تمنع توهج الشاشة الأبيض وتريح البصر
+   - أخضر مريمي وقور وهادئ (Sage Green)
+   - زيتوني ناعم ونصوص غامقة مقروءة بوضوح فائق
+   - لمسات ذهبية إسلامية خافتة وراقية
+------------------------------------------------------------- */
+body.light-mode {
+  --bg-primary: #f8f6f0;        /* عاجي كريمي دافئ */
+  --bg-secondary: #f0ebe1;      /* بيج رملي فاتح ناعم */
+  --bg-card: #ffffff;           /* بطاقات بيضاء نقية ومريحة */
+  --bg-card-subtle: #fbf9f4;    /* خلفية كارت الذكر العاجية الهادئة */
+  
+  --text-primary: #192e24;      /* أخضر فحمي غامق فائق الوضوح ومريح */
+  --text-secondary: #3b5045;    /* زيتوني داكن للقراءة الثانوية */
+  --text-muted: #6e8276;        /* أخضر رمادي ناعم للإرشادات والتفاصيل */
+  
+  --border-color: #e4ddd0;      /* حدود دافئة متناسقة */
+  --border-focus: #2d6a4f;      /* تركيز أخضر مريمي ناضج */
+  
+  --brand-primary: #2d6a4f;     /* أخضر مريمي طبيعي مهيب */
+  --brand-primary-hover: #22543d;
+  --brand-primary-light: #eaf3ed;
+  
+  --brand-accent: #c28e2b;      /* ذهبي إسلامي راقٍ ومتزن */
+  --brand-accent-hover: #a87920;
+  --brand-accent-light: #fef7eb;
+  
+  /* ألوان العداد المريمي */
+  --counter-bg: #f3f8f5;
+  --counter-bg-hover: #eaf4ef;
+  --counter-border: #b8d7c7;
+  --counter-text: #1d4d38;
+  --counter-ring-bg: #d9ebe1;
+  --counter-ring-fg: #2d6a4f;
+  
+  /* الرأس والظلال */
+  --header-bg: rgba(248, 246, 240, 0.92);
+  --shadow-sm: 0 2px 6px rgba(25, 46, 36, 0.04);
+  --shadow-md: 0 8px 24px -4px rgba(25, 46, 36, 0.07), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 18px 42px -6px rgba(25, 46, 36, 0.09), 0 6px 16px -2px rgba(0, 0, 0, 0.04);
+  --glow-color: rgba(45, 106, 79, 0.06);
+}
+
+/* -------------------------------------------------------------
+   الوضع الهادئ (Dark Mode):
+   - أخضر فحمي غابوي دافئ ومهيب (Deep Warm Forest Charcoal)
+   - يبتعد تماماً عن السواد الحاد وعن الأزرق الفاقع المشتت
+   - بطاقات مميزة تتباين بهدوء تام مع الخلفية
+   - نصوص بلون اللؤلؤ الفاتح بدون أي توهج مزعج في الظلام
+   - إضاءات خضراء مريمية ناعمة وذهب دافئ
+------------------------------------------------------------- */
+body.dark-mode {
+  --bg-primary: #121915;        /* أخضر فحمي ليلي دافئ */
+  --bg-secondary: #18221d;      /* طبقة ثانية متناسقة */
+  --bg-card: #1d2b24;           /* بطاقات مميزة بلون المريمية الداكن */
+  --bg-card-subtle: #17231c;    /* خلفية كارت الذكر المنسجمة */
+  
+  --text-primary: #f0f7f3;      /* لؤلؤي كريمي ناعم لا يجهد العين */
+  --text-secondary: #b6c9be;    /* أخضر باهت أنيق */
+  --text-muted: #799183;        /* رمادي عشبي هادئ */
+  
+  --border-color: rgba(255, 255, 255, 0.09);
+  --border-focus: #52b788;
+  
+  --brand-primary: #40916c;     /* مريمي مضيء بنعومة في الليل */
+  --brand-primary-hover: #52b788;
+  --brand-primary-light: rgba(64, 145, 108, 0.18);
+  
+  --brand-accent: #d4af37;      /* ذهبي هادئ مشرق */
+  --brand-accent-hover: #e5bf47;
+  --brand-accent-light: rgba(212, 175, 55, 0.15);
+  
+  /* ألوان العداد في الوضع الليلي */
+  --counter-bg: #16241c;
+  --counter-bg-hover: #1c2e24;
+  --counter-border: #2e4d3a;
+  --counter-text: #6ee7b7;
+  --counter-ring-bg: #23372b;
+  --counter-ring-fg: #40916c;
+  
+  /* الرأس والظلال */
+  --header-bg: rgba(18, 25, 21, 0.92);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 8px 26px -3px rgba(0, 0, 0, 0.42);
+  --shadow-lg: 0 20px 46px -6px rgba(0, 0, 0, 0.55);
+  --glow-color: rgba(64, 145, 108, 0.05);
+}
+
+/* 2. إعادة التعيين والخصائص العامة (Reset & Base) */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* إضاءة خلفية هادئة ناعمة */
+.ambient-glow {
+  position: fixed;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  height: 420px;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(50px);
+}
+
+.app-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 18px 28px;
+}
+
+/* أزرار وحقول إدخال منع الزووم المزعج على الهواتف */
+button, select, input {
+  touch-action: manipulation;
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+  user-select: none;
+}
+
+/* 3. شريط الرأس العلوي (Header) */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 14px 0 10px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-hover));
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.25);
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(45, 106, 79, 0.35);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* شارة أيام الالتزام (Streak Badge) */
+.streak-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--brand-accent-light);
+  color: var(--brand-accent);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid rgba(194, 142, 43, 0.25);
+  transition: transform var(--transition-fast);
+}
+
+.streak-badge:hover {
+  transform: scale(1.04);
+}
+
+.streak-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.streak-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  transform: translateY(-1px);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+/* 4. تبويبات الأقسام (Categories Navigation Tabs) */
+.categories-nav {
+  width: 100%;
+  padding: 2px 0;
+}
+
+.nav-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-btn:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+}
+
+.tab-btn.active {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.32);
+}
+
+.tab-btn .tab-badge {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+
+.tab-btn.active .tab-badge {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+/* 5. شريط تقدم القسم (Section Progress Bar) */
+.section-progress-bar-container {
+  margin-bottom: 16px;
+}
+
+.section-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-accent), var(--brand-primary));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+/* 6. بطاقة الذكر الرئيسية (Dhikr Card) */
+.dhikr-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 14px;
+}
+
+.dhikr-position {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-index {
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid rgba(45, 106, 79, 0.15);
+}
+
+.badge-repeat {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.badge-repeat.editable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: 1px dashed rgba(194, 142, 43, 0.45);
+  background: var(--brand-accent-light);
+  color: var(--brand-accent);
+  transition: all var(--transition-fast);
+}
+
+.badge-repeat.editable:hover {
+  border-color: var(--brand-accent);
+  background: var(--brand-accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.badge-repeat.editable:hover .edit-target-icon {
+  color: #ffffff;
+}
+
+.edit-target-icon {
+  color: var(--brand-accent);
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.card-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.small-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.small-action-btn:hover {
+  color: var(--brand-primary);
+  border-color: var(--border-color);
+  background: var(--bg-card);
+  transform: translateY(-1px);
+}
+
+/* أزرار التحكم بحجم الخط */
+.font-size-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  border: 1px solid var(--border-color);
+}
+
+.font-btn {
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+/* كارت نص الذكر المعزول والمميز بحرفية */
+.dhikr-showcase-card {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all var(--transition-normal);
+}
+
+.dhikr-text-inner {
+  font-family: var(--font-arabic-text);
+  font-size: var(--dhikr-font-size, 1.55rem);
+  line-height: 2.35;
+  color: var(--text-primary);
+  text-align: justify;
+  text-justify: auto;
+  white-space: pre-line;
+  word-spacing: 2px;
+  padding: 4px 14px 4px 6px;
+  border-right: 4px solid var(--brand-primary);
+  border-radius: 2px;
+  transition: font-size 0.15s ease;
+}
+
+/* بطاقة فضل الذكر وتخريجه المهدئة */
+.dhikr-reward-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border-right: 3px solid var(--brand-accent);
+  transition: all var(--transition-normal);
+}
+
+.reward-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.reward-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.reward-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--brand-accent);
+}
+
+.reward-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* 7. زر العداد العملاق الناعم (Redesigned Dhikr Counter Button) */
+.counter-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4px 0;
+  width: 100%;
+}
+
+/* شريط الإحصاءات السريعة فوق العداد */
+.counter-stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.counter-stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.counter-stat-item.completed-item {
+  color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  border-color: rgba(45, 106, 79, 0.2);
+}
+
+.counter-stat-item.remaining-item {
+  color: var(--brand-accent);
+  background: var(--brand-accent-light);
+  border-color: rgba(194, 142, 43, 0.25);
+}
+
+.stat-label {
+  font-size: 0.76rem;
+  opacity: 0.88;
+}
+
+.stat-value {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+}
+
+/* الزر العملاق */
+.huge-counter-btn {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 145px;
+  background: var(--counter-bg);
+  border: 2px solid var(--counter-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-normal), border-color var(--transition-normal);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.huge-counter-btn:hover {
+  background: var(--counter-bg-hover);
+  border-color: var(--counter-ring-fg);
+  box-shadow: var(--shadow-lg);
+}
+
+.huge-counter-btn:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-sm);
+}
+
+.huge-counter-btn.completed {
+  background: linear-gradient(135deg, #1b4d3e, #2d6a4f);
+  border-color: #52b788;
+  color: #ffffff;
+  box-shadow: 0 10px 28px rgba(45, 106, 79, 0.35);
+}
+
+.huge-counter-btn.completed .current-count,
+.huge-counter-btn.completed .target-count,
+.huge-counter-btn.completed .counter-separator,
+.huge-counter-btn.completed .tap-hint {
+  color: #ffffff !important;
+}
+
+.counter-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.counter-progress-ring {
+  position: absolute;
+  width: 115px;
+  height: 115px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  opacity: 0.45;
+  transition: opacity var(--transition-normal);
+}
+
+.huge-counter-btn:hover .counter-progress-ring {
+  opacity: 0.65;
+}
+
+.ring-bg {
+  fill: none;
+  stroke: var(--counter-ring-bg);
+  stroke-width: 8;
+}
+
+.ring-fg {
+  fill: none;
+  stroke: var(--counter-ring-fg);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 339.292; /* 2 * PI * 54 */
+  stroke-dashoffset: 339.292;
+  transition: stroke-dashoffset 0.22s ease;
+}
+
+.counter-center-content {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.current-count {
+  font-size: 3.4rem;
+  font-weight: 800;
+  color: var(--counter-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  letter-spacing: -1px;
+}
+
+.counter-separator {
+  font-size: 1.9rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.target-count {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.tap-hint {
+  z-index: 2;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 6px;
+  transition: color var(--transition-fast);
+}
+
+/* تفاعل لمس مرن وخافت بدون إزعاج بصري (Micro-interaction) */
+.huge-counter-btn.pulse-tap {
+  animation: gentleTapEffect 0.14s cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+
+@keyframes gentleTapEffect {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+/* شريط رسالة إتمام الهدف (Completion Banner) */
+.completion-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 440px;
+  padding: 10px 16px;
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  animation: bannerFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.completion-icon {
+  font-size: 1.15rem;
+  color: var(--brand-accent);
+}
+
+/* 8. أدوات التحكم بالبطاقة (Controls Row) */
+.card-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.control-btn, .nav-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 10px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.control-btn:hover, .nav-control-btn:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: var(--bg-card);
+  transform: translateY(-1px);
+}
+
+.control-btn:active, .nav-control-btn:active {
+  transform: translateY(1px);
+}
+
+.nav-control-btn {
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+  border-color: rgba(45, 106, 79, 0.15);
+}
+
+.nav-control-btn:hover {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-color: var(--brand-primary);
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
+}
+
+/* زر التصفير الآمن لحماية المستخدم من النقر بالخطأ */
+.control-btn.confirm-danger {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-color: #f87171 !important;
+  animation: shakeAlert 0.25s ease;
+}
+
+body.dark-mode .control-btn.confirm-danger {
+  background: #451a1a !important;
+  color: #fca5a5 !important;
+  border-color: #ef4444 !important;
+}
+
+@keyframes shakeAlert {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* 9. واجهة المسبحة الحرة (Masbaha View) */
+.masbaha-view {
+  width: 100%;
+}
+
+.masbaha-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.masbaha-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  margin-bottom: 4px;
+}
+
+.masbaha-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.masbaha-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.masbaha-input-group label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.form-select, .form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-select:focus, .form-input:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px var(--brand-primary-light);
+}
+
+.masbaha-target-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.target-row-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.target-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip-btn {
+  padding: 6px 14px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.chip-btn:hover {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  background: var(--bg-card);
+}
+
+.chip-btn.active {
+  background: var(--brand-accent);
+  color: #ffffff;
+  border-color: var(--brand-accent);
+  box-shadow: 0 2px 8px rgba(194, 142, 43, 0.35);
+}
+
+.masbaha-active-text {
+  font-family: var(--font-arabic-text);
+  font-size: 1.65rem;
+  text-align: center;
+  color: var(--text-primary);
+  padding: 18px 16px;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+  line-height: 1.8;
+  word-spacing: 2px;
+}
+
+.masbaha-controls {
+  grid-template-columns: 1fr 1fr 2fr;
+}
+
+.total-all-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.total-all-box strong {
+  color: var(--brand-primary);
+  font-size: 1.15rem;
+}
+
+/* 10. تذييل الصفحة الهادئ (App Footer) */
+.app-footer {
+  margin-top: auto;
+  padding-top: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* 11. النوافذ المنبثقة (Modals) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-dialog {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 580px;
+  max-height: 85vh;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-card-subtle);
+}
+
+.modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.close-btn {
+  font-size: 1.1rem;
+}
+
+.modal-body {
+  padding: 14px 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-dhikr-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modal-dhikr-item:hover {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  transform: translateX(-2px);
+}
+
+.modal-dhikr-item.active {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  font-weight: 700;
+}
+
+.modal-dhikr-preview {
+  font-family: var(--font-arabic-text);
+  font-size: 1rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.modal-dhikr-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.modal-status-badge {
+  font-size: 0.75rem;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.modal-status-badge.done {
+  background: var(--brand-primary);
+  color: #ffffff;
+}
+
+/* نافذة تعديل هدف التكرار (Custom Target Modal) */
+.target-modal-dialog {
+  max-width: 450px;
+}
+
+.target-modal-body {
+  gap: 16px;
+  padding: 18px 22px;
+}
+
+.target-modal-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.quick-target-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.target-choice-chip {
+  padding: 7px 14px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.target-choice-chip:hover {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  background: var(--bg-card);
+}
+
+.target-choice-chip.active {
+  background: var(--brand-accent);
+  color: #ffffff;
+  border-color: var(--brand-accent);
+  box-shadow: 0 2px 8px rgba(194, 142, 43, 0.35);
+}
+
+.custom-target-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.custom-target-input-row label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.custom-target-form {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-target-form .form-input {
+  flex: 1;
+}
+
+.apply-target-btn {
+  padding: 9px 18px;
+  background: var(--brand-primary);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.apply-target-btn:hover {
+  background: var(--brand-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* 12. إشعار الاحتفال (Toast Notification) */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  left: 24px;
+  max-width: 400px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--brand-primary);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 200;
+  animation: toastSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.toast-icon {
+  font-size: 1.8rem;
+}
+
+.toast-body h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin-bottom: 2px;
+}
+
+.toast-body p {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* 13. وضع التسبيح بملء الشاشة (Screen Tap Overlay) */
+.screen-tap-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 20px;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overlay-hint {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+}
+
+.exit-overlay-btn {
+  padding: 7px 16px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.overlay-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+}
+
+.overlay-dhikr {
+  font-family: var(--font-arabic-text);
+  font-size: 1.75rem;
+  line-height: 2.1;
+  color: var(--text-primary);
+  max-width: 620px;
+}
+
+.overlay-counter {
+  font-size: 4.4rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.overlay-tap-msg {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+/* 14. فئات المساعدة وتجاوب الشاشات (Responsive & Utilities) */
+.hidden {
+  display: none !important;
+}
+
+/* الشاشات الصغيرة والهواتف (Mobile Friendly Optimization - بدون أي تمرير أفقي) */
+@media (max-width: 640px) {
+  .app-wrapper {
+    padding: 0 12px 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .nav-scroll {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .tab-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 4px;
+    font-size: 0.76rem;
+    justify-content: center;
+    gap: 3px;
+    text-align: center;
+  }
+
+  .tab-btn .tab-badge {
+    display: none; /* إخفاء الشارة في الهواتف الصغيرة لترتيب الأقسام في سطرين أنيقين متوازنين */
+  }
+
+  .dhikr-card {
+    padding: 18px 14px;
+    gap: 16px;
+  }
+
+  .dhikr-showcase-card {
+    padding: 18px 14px;
+  }
+
+  .dhikr-text-inner {
+    font-size: var(--dhikr-font-size, 1.4rem);
+    line-height: 2.15;
+    padding: 2px 10px 2px 4px;
+  }
+
+  .huge-counter-btn {
+    height: 130px;
+  }
+
+  .current-count {
+    font-size: 2.8rem;
+  }
+
+  .target-count {
+    font-size: 1.55rem;
+  }
+
+  .counter-stats-bar {
+    gap: 8px;
+  }
+
+  .counter-stat-item {
+    padding: 3px 10px;
+    font-size: 0.78rem;
+  }
+
+  .card-controls {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .masbaha-controls {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .total-all-box {
+    grid-column: span 2;
+  }
+}
+
+/* الشاشات اللوحية والمكتبية (Tablets & Desktops) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .nav-scroll {
+    justify-content: center;
+  }
+
+  .dhikr-text-inner {
+    font-size: var(--dhikr-font-size, 1.55rem);
+  }
+  
+  .huge-counter-btn {
+    height: 145px;
+  }
+}
+
+/* احترام تفضيل المستخدم لتقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
