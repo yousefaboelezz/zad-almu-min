@@ -20,7 +20,7 @@
   };
 
   const state = {
-    currentCategory: 'sabah',
+    currentCategory: 'home',
     currentIndex: 0,
     progress: {},
     customTargets: {},
@@ -62,8 +62,14 @@
     currentCategoryTitle: document.getElementById('currentCategoryTitle'),
     categoryProgressRatio: document.getElementById('categoryProgressRatio'),
     categoryProgressBar: document.getElementById('categoryProgressBar'),
+    sectionProgressContainer: document.getElementById('sectionProgressContainer'),
 
-    ramadanCountdownCard: document.getElementById('ramadanCountdownCard'),
+    homeView: document.getElementById('homeView'),
+    goSabahBtn: document.getElementById('goSabahBtn'),
+    goMasaaBtn: document.getElementById('goMasaaBtn'),
+    goSalahBtn: document.getElementById('goSalahBtn'),
+    goMasbahaBtn: document.getElementById('goMasbahaBtn'),
+
     ramadanDays: document.getElementById('ramadanDays'),
     ramadanHours: document.getElementById('ramadanHours'),
     ramadanMinutes: document.getElementById('ramadanMinutes'),
@@ -372,18 +378,24 @@
   }
 
   function renderCurrentView() {
-    if (state.currentCategory === 'masbaha') {
-      elements.dhikrCard.classList.add('hidden');
+    if (elements.homeView) elements.homeView.classList.add('hidden');
+    elements.dhikrCard.classList.add('hidden');
+    elements.masbahaView.classList.add('hidden');
+    if (elements.sectionProgressContainer) elements.sectionProgressContainer.classList.add('hidden');
+
+    if (state.currentCategory === 'home') {
+      if (elements.homeView) elements.homeView.classList.remove('hidden');
+    } else if (state.currentCategory === 'masbaha') {
       elements.masbahaView.classList.remove('hidden');
-      if (elements.ramadanCountdownCard) elements.ramadanCountdownCard.classList.add('hidden');
+      if (elements.sectionProgressContainer) elements.sectionProgressContainer.classList.remove('hidden');
       renderMasbahaView();
+      updateCategoryProgress();
     } else {
       elements.dhikrCard.classList.remove('hidden');
-      elements.masbahaView.classList.add('hidden');
-      if (elements.ramadanCountdownCard) elements.ramadanCountdownCard.classList.remove('hidden');
+      if (elements.sectionProgressContainer) elements.sectionProgressContainer.classList.remove('hidden');
       renderActiveDhikr();
+      updateCategoryProgress();
     }
-    updateCategoryProgress();
   }
 
   function formatArabicRepetition(count) {
@@ -470,14 +482,16 @@
       return;
     }
 
-    const totalItems = cat.items.length;
+    const totalItems = cat.items ? cat.items.length : 0;
     let completedItems = 0;
 
-    cat.items.forEach(item => {
-      const c = state.progress[item.id] || 0;
-      const target = getDhikrTarget(item);
-      if (c >= target) completedItems++;
-    });
+    if (cat.items) {
+      cat.items.forEach(item => {
+        const c = state.progress[item.id] || 0;
+        const target = getDhikrTarget(item);
+        if (c >= target) completedItems++;
+      });
+    }
 
     const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
     elements.categoryProgressRatio.textContent = `${completedItems} / ${totalItems} مكتمل (${percent}%)`;
@@ -594,14 +608,16 @@
   function checkCategoryCompletion() {
     const cat = getCurrentCategoryData();
     let allDone = true;
-    cat.items.forEach(item => {
-      const c = state.progress[item.id] || 0;
-      const target = getDhikrTarget(item);
-      if (c < target) allDone = false;
-    });
+    if (cat.items) {
+      cat.items.forEach(item => {
+        const c = state.progress[item.id] || 0;
+        const target = getDhikrTarget(item);
+        if (c < target) allDone = false;
+      });
+    }
 
     if (allDone) {
-      showToast('مبارك! تقبل الله طاعتك ✨', `لقد أتممت جميع أذكار ${cat.name} بنجاح.`);
+      showToast('تقبل الله طاعتك', `لقد أتممت جميع أذكار ${cat.name} بنجاح.`);
     }
   }
 
@@ -663,16 +679,14 @@
     triggerHaptic('tap');
   }
 
-  // ==========================================================
-  // منطق سبحة الخرز الدائرية وتحديد الهدف المخصص
-  // ==========================================================
+  // سبحة الخرز الدائرية
   function createBeadsRing() {
     const ring = document.getElementById('beadsRing');
     if (!ring) return;
     ring.innerHTML = '';
     
     const isMobile = window.innerWidth <= 640;
-    const radius = isMobile ? 100 : 118; // المسافة المحيطية الدائرية
+    const radius = isMobile ? 100 : 118;
 
     for (let i = 0; i < TOTAL_BEADS; i++) {
       const bead = document.createElement('div');
@@ -743,7 +757,7 @@
         elements.targetChips.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.masbaha.target = parseInt(btn.dataset.target, 10);
-        state.masbaha.count = 0; // تصفير العداد للبدء في الهدف الجديد
+        state.masbaha.count = 0;
         if (elements.masbahaCustomTargetNumber) elements.masbahaCustomTargetNumber.value = '';
         updateMasbahaDisplay();
         saveMasbahaState();
@@ -829,12 +843,6 @@
   }
 
   function handleMasbahaCounterTap() {
-    if (elements.masbahaCounterBtn) {
-      elements.masbahaCounterBtn.classList.remove('pulse-tap');
-      void elements.masbahaCounterBtn.offsetWidth;
-      elements.masbahaCounterBtn.classList.add('pulse-tap');
-    }
-
     state.masbaha.count += 1;
     saveMasbahaState();
     incrementDailyTotal();
@@ -938,7 +946,7 @@
     if (toastTimeout) clearTimeout(toastTimeout);
     toastTimeout = setTimeout(() => {
       elements.toastNotification.classList.add('hidden');
-    }, 3500);
+    }, 3000);
   }
 
   function handleKeyDown(e) {
@@ -950,14 +958,14 @@
       else handleMainCounterTap();
     } else if (e.code === 'ArrowLeft') {
       e.preventDefault();
-      if (state.currentCategory !== 'masbaha') goToNextDhikr();
+      if (state.currentCategory !== 'masbaha' && state.currentCategory !== 'home') goToNextDhikr();
     } else if (e.code === 'ArrowRight') {
       e.preventDefault();
-      if (state.currentCategory !== 'masbaha') goToPrevDhikr();
+      if (state.currentCategory !== 'masbaha' && state.currentCategory !== 'home') goToPrevDhikr();
     } else if (e.code === 'KeyZ' || e.code === 'Backspace') {
       e.preventDefault();
       if (state.currentCategory === 'masbaha') undoMasbaha();
-      else undoCurrentDhikr();
+      else if (state.currentCategory !== 'home') undoCurrentDhikr();
     } else if (e.code === 'Escape') {
       closeTargetModal();
       if (state.isFullScreenTap) exitFullScreenTap();
@@ -1022,6 +1030,12 @@
     elements.masbahaCounterBtn.addEventListener('click', handleMasbahaCounterTap);
     elements.masbahaUndoBtn.addEventListener('click', undoMasbaha);
     elements.masbahaResetBtn.addEventListener('click', resetMasbaha);
+
+    // أزرار الانتقال السريع في الصفحة الرئيسية
+    if (elements.goSabahBtn) elements.goSabahBtn.addEventListener('click', () => switchCategory('sabah'));
+    if (elements.goMasaaBtn) elements.goMasaaBtn.addEventListener('click', () => switchCategory('masaa'));
+    if (elements.goSalahBtn) elements.goSalahBtn.addEventListener('click', () => switchCategory('salah'));
+    if (elements.goMasbahaBtn) elements.goMasbahaBtn.addEventListener('click', () => switchCategory('masbaha'));
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('resize', createBeadsRing);
