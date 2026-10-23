@@ -1,8 +1,6 @@
 /* ==========================================================
-   زاد المؤمن - ملف التنسيقات والجماليات (style.css)
-   ألوان داكنة مضيئة:
-   سواد عميق + سماوي (#22d3ee) + بنفسجي (#a855f7) + ذهبي (#facc15)
-   مع دعم No-Scroll للشاشات الصغيرة وتصميم سبحة الخرز الدائرية
+   زاد المؤمن - ملف التنسيقات والجماليات الخفيف فائق السرعة
+   بدون أي فلاتر بلور أو Transitions معقدة لتوفير أداء فوري
    ========================================================== */
 
 :root {
@@ -12,13 +10,8 @@
   --radius-xs: 6px;
   --radius-sm: 10px;
   --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
-
-  --transition-fast: 0.12s cubic-bezier(0.2, 0.8, 0.4, 1);
-  --transition-normal: 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-slow: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body.dark-mode {
@@ -31,12 +24,12 @@ body.dark-mode {
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   
-  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color: #242736;
   --border-focus: #22d3ee;
   
   --brand-primary: #22d3ee;
   --brand-primary-hover: #06b6d4;
-  --brand-primary-light: rgba(34, 211, 238, 0.14);
+  --brand-primary-light: rgba(34, 211, 238, 0.12);
   
   --brand-purple: #a855f7;
   --brand-purple-light: rgba(168, 85, 247, 0.15);
@@ -45,21 +38,19 @@ body.dark-mode {
   --brand-accent-hover: #eab308;
   --brand-accent-light: rgba(250, 204, 21, 0.14);
   
-  --ramadan-card-bg: linear-gradient(160deg, #181528 0%, #10111a 100%);
-  --ramadan-box-bg: rgba(18, 19, 28, 0.85);
+  --ramadan-card-bg: #141622;
+  --ramadan-box-bg: #1a1c2a;
   
   --counter-bg: #12131d;
   --counter-bg-hover: #171826;
-  --counter-border: rgba(34, 211, 238, 0.35);
+  --counter-border: #22d3ee;
   --counter-text: #22d3ee;
-  --counter-ring-bg: rgba(255, 255, 255, 0.06);
+  --counter-ring-bg: #1e2235;
   --counter-ring-fg: #22d3ee;
   
-  --header-bg: rgba(9, 10, 16, 0.94);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --glow-color: rgba(168, 85, 247, 0.12);
+  --header-bg: #090a10;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 body.light-mode {
@@ -86,21 +77,19 @@ body.light-mode {
   --brand-accent-hover: #b45309;
   --brand-accent-light: #fef3c7;
 
-  --ramadan-card-bg: linear-gradient(160deg, #fdf8eb 0%, #ffffff 100%);
+  --ramadan-card-bg: #ffffff;
   --ramadan-box-bg: #f8f6f0;
   
   --counter-bg: #f3f8f5;
   --counter-bg-hover: #eaf4ef;
-  --counter-border: #b8d7c7;
+  --counter-border: #0f766e;
   --counter-text: #0f766e;
   --counter-ring-bg: #d9ebe1;
   --counter-ring-fg: #0f766e;
   
-  --header-bg: rgba(248, 246, 240, 0.94);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 18px 42px rgba(0, 0, 0, 0.08);
-  --glow-color: rgba(15, 118, 110, 0.06);
+  --header-bg: #f8f6f0;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
 }
 
 *, *::before, *::after {
@@ -126,23 +115,9 @@ body {
   line-height: 1.6;
   display: flex;
   flex-direction: column;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
   overflow-x: hidden;
   position: relative;
   -webkit-font-smoothing: antialiased;
-}
-
-.ambient-glow {
-  position: fixed;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 400px;
-  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
-  z-index: 0;
-  pointer-events: none;
-  filter: blur(60px);
 }
 
 .app-wrapper {
@@ -176,12 +151,9 @@ button {
   top: 0;
   z-index: 50;
   background-color: var(--header-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   padding: 8px 0 6px;
   margin-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
-  transition: all var(--transition-normal);
 }
 
 .header-inner {
@@ -208,7 +180,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
   flex-shrink: 0;
 }
 
@@ -260,13 +231,11 @@ button {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
 }
 
 .icon-btn:hover {
   color: var(--brand-primary);
   border-color: var(--brand-primary);
-  background: var(--brand-primary-light);
 }
 
 /* تبويبات الأقسام */
@@ -297,15 +266,12 @@ button {
   font-weight: 600;
   flex: 1 1 auto;
   cursor: pointer;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-sm);
   min-height: 36px;
 }
 
 .tab-btn:hover {
   color: var(--brand-primary);
   border-color: var(--brand-primary);
-  background: var(--brand-primary-light);
 }
 
 .tab-btn.active {
@@ -313,7 +279,6 @@ button {
   color: #090a10;
   font-weight: 700;
   border-color: var(--brand-primary);
-  box-shadow: 0 0 16px rgba(34, 211, 238, 0.4);
 }
 
 body.light-mode .tab-btn.active {
@@ -333,18 +298,25 @@ body.light-mode .tab-btn.active {
   font-weight: 700;
 }
 
-/* كارت عداد رمضان */
+/* ==============================================
+   قسم الرئيسية: عداد رمضان والوصول السريع
+   ============================================== */
+.home-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
 .ramadan-countdown-card {
   background: var(--ramadan-card-bg);
   border: 1.5px solid rgba(168, 85, 247, 0.35);
-  box-shadow: 0 0 24px rgba(168, 85, 247, 0.12), var(--shadow-md);
   border-radius: var(--radius-lg);
-  padding: 14px 12px;
-  margin-bottom: 10px;
+  padding: 16px 14px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   position: relative;
   overflow: hidden;
 }
@@ -363,23 +335,21 @@ body.light-mode .tab-btn.active {
 }
 
 .crescent-icon {
-  font-size: 1.3rem;
-  filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.5));
+  font-size: 1.4rem;
 }
 
 .ramadan-title {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 800;
   background: linear-gradient(90deg, #facc15, #f59e0b);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  letter-spacing: -0.3px;
 }
 
 .ramadan-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
@@ -387,60 +357,93 @@ body.light-mode .tab-btn.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   direction: ltr;
 }
 
 .countdown-box {
   flex: 1;
-  max-width: 90px;
-  min-width: 65px;
-  padding: 8px 4px;
+  max-width: 95px;
+  min-width: 68px;
+  padding: 10px 4px;
   border-radius: var(--radius-md);
   background: var(--ramadan-box-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-fast);
 }
 
 .countdown-box.cyan-glow {
   border: 1.5px solid var(--brand-primary);
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.25);
   color: var(--brand-primary);
 }
 
 .countdown-box.purple-glow {
   border: 1.5px solid var(--brand-purple);
-  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
   color: var(--brand-purple);
 }
 
 .countdown-box.yellow-glow {
   border: 1.5px solid var(--brand-accent);
-  box-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
   color: var(--brand-accent);
 }
 
 .countdown-num {
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
 .countdown-label {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 3px;
   color: var(--text-secondary);
 }
 
 .countdown-colon {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: rgba(148, 163, 184, 0.4);
+}
+
+.quick-nav-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: center;
+}
+
+.quick-nav-card h3 {
+  font-size: 1rem;
+  color: var(--brand-primary);
+  margin-bottom: 12px;
+}
+
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.quick-link-btn {
+  padding: 12px 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quick-link-btn:hover {
+  background: var(--brand-primary-light);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 /* شريط التقدم */
@@ -471,7 +474,6 @@ body.light-mode .tab-btn.active {
   height: 100%;
   background: linear-gradient(90deg, var(--brand-purple), var(--brand-primary));
   border-radius: var(--radius-full);
-  transition: width var(--transition-slow);
 }
 
 /* بطاقة الذكر */
@@ -484,7 +486,6 @@ body.light-mode .tab-btn.active {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: all var(--transition-normal);
 }
 
 .card-header {
@@ -526,7 +527,6 @@ body.light-mode .tab-btn.active {
   border: 1px dashed rgba(250, 204, 21, 0.4);
   background: var(--brand-accent-light);
   color: var(--brand-accent);
-  transition: all var(--transition-fast);
 }
 
 .badge-repeat.editable:hover {
@@ -669,30 +669,21 @@ body.light-mode .dhikr-reward-card {
   background: var(--counter-bg);
   border: 2px solid var(--counter-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
-  transition: all var(--transition-fast);
-}
-
-.huge-counter-btn:hover {
-  background: var(--counter-bg-hover);
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 26px rgba(34, 211, 238, 0.25);
 }
 
 .huge-counter-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .huge-counter-btn.completed {
-  background: linear-gradient(135deg, #0e7490, #0891b2);
+  background: #0e7490;
   border-color: #22d3ee;
-  box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
 }
 
 .huge-counter-btn.completed .current-count,
@@ -726,7 +717,6 @@ body.light-mode .dhikr-reward-card {
   stroke-linecap: round;
   stroke-dasharray: 339.292;
   stroke-dashoffset: 339.292;
-  transition: stroke-dashoffset 0.2s ease;
 }
 
 .counter-center-content {
@@ -801,14 +791,12 @@ body.light-mode .dhikr-reward-card {
   border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 600;
-  transition: all var(--transition-fast);
 }
 
 .control-btn:hover, .nav-control-btn:hover {
   color: var(--brand-primary);
   border-color: var(--brand-primary);
   background: var(--bg-card);
-  transform: translateY(-1px);
 }
 
 .nav-control-btn {
@@ -824,7 +812,7 @@ body.light-mode .dhikr-reward-card {
 }
 
 /* ==========================================================
-   تصميم سبحة الخرز الدائرية التفاعلية
+   سبحة الخرز الدائرية (لون زمردي مريح وموحد)
    ========================================================== */
 .circular-bead-counter {
   position: relative;
@@ -834,9 +822,9 @@ body.light-mode .dhikr-reward-card {
   min-height: 230px !important;
   border-radius: 50% !important;
   margin: 10px auto;
-  border: 2px solid rgba(168, 85, 247, 0.4) !important;
-  background: radial-gradient(circle, #131522 0%, #0a0b12 100%) !important;
-  box-shadow: 0 0 28px rgba(168, 85, 247, 0.25), inset 0 0 20px rgba(34, 211, 238, 0.15) !important;
+  border: 2px solid rgba(34, 211, 238, 0.3) !important;
+  background: radial-gradient(circle, #101420 0%, #07080f 100%) !important;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.15) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -845,10 +833,9 @@ body.light-mode .dhikr-reward-card {
 
 .beads-ring-container {
   position: absolute;
-  inset: -10px;
+  inset: -14px;
   border-radius: 50%;
   pointer-events: none;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform: rotate(var(--bead-rotation, 0deg));
 }
 
@@ -858,31 +845,27 @@ body.light-mode .dhikr-reward-card {
   height: 17px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #5eead4 0%, #0d9488 65%, #134e4a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 8px rgba(20, 184, 166, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
   top: 50%;
   left: 50%;
   margin-top: -8.5px;
   margin-left: -8.5px;
-  transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-
 .masbaha-bead.active-spark {
-  transform: scale(1.4) !important;
-  filter: brightness(1.6);
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.9), 0 0 12px #22d3ee !important;
+  transform: scale(1.3) !important;
+  filter: brightness(1.4);
 }
 
 .circular-bead-counter .counter-progress-ring {
-  width: 130px;
-  height: 130px;
+  width: 125px;
+  height: 125px;
 }
 
 .circular-bead-counter .current-count {
   font-size: 2.7rem;
   color: var(--brand-primary);
-  text-shadow: 0 0 15px rgba(34, 211, 238, 0.6);
 }
 
 .circular-bead-counter .target-count {
@@ -984,7 +967,6 @@ body.light-mode .dhikr-reward-card {
   border-radius: var(--radius-full);
   font-size: 0.78rem;
   font-weight: 600;
-  transition: all var(--transition-fast);
 }
 
 .chip-btn.active {
@@ -1056,8 +1038,6 @@ body.light-mode .dhikr-reward-card {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -1158,7 +1138,6 @@ body.light-mode .dhikr-reward-card {
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1.5px solid var(--brand-primary);
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.25);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   display: flex;
@@ -1226,7 +1205,6 @@ body.light-mode .dhikr-reward-card {
   color: var(--brand-primary);
   line-height: 1;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 25px rgba(34, 211, 238, 0.5);
 }
 
 .overlay-tap-msg {
@@ -1239,17 +1217,11 @@ body.light-mode .dhikr-reward-card {
 }
 
 /* ==========================================================
-   تجاوب الهاتف الكامل بدون سكرول (No-Scroll Mobile Layout)
+   تجاوب كامل مع الهواتف دون الحاجة لأي سكرول
    ========================================================== */
 @media (max-width: 640px) {
-  html, body {
-    height: 100%;
-    overflow-y: auto;
-  }
-
   .app-wrapper {
     padding: 0 8px 12px;
-    min-height: 100dvh;
   }
 
   .app-header {
@@ -1274,37 +1246,6 @@ body.light-mode .dhikr-reward-card {
     display: none;
   }
 
-  .ramadan-countdown-card {
-    padding: 8px 6px;
-    margin-bottom: 6px;
-    gap: 6px;
-  }
-
-  .ramadan-title {
-    font-size: 1.1rem;
-  }
-
-  .crescent-icon {
-    font-size: 1.1rem;
-  }
-
-  .ramadan-subtitle {
-    display: none; /* إخفاء النص الفرعي لتوفير مساحة رأسية */
-  }
-
-  .countdown-box {
-    padding: 6px 2px;
-    min-width: 54px;
-  }
-
-  .countdown-num {
-    font-size: 1.35rem;
-  }
-
-  .countdown-label {
-    font-size: 0.68rem;
-  }
-
   .dhikr-card {
     padding: 10px 8px;
     gap: 8px;
@@ -1313,23 +1254,21 @@ body.light-mode .dhikr-reward-card {
   .dhikr-showcase-card {
     padding: 10px 8px;
     gap: 6px;
-    max-height: 25vh; /* حصر نص الذكر ليبقى الزر ظاهراً دون سكرول */
-    overflow-y: auto;
   }
 
   .dhikr-text-inner {
     font-size: var(--dhikr-font-size, 1.25rem);
-    line-height: 1.9;
+    line-height: 1.95;
     padding-right: 8px;
   }
 
   .huge-counter-btn {
-    min-height: 105px;
+    min-height: 110px;
     padding: 8px 4px;
   }
 
   .current-count {
-    font-size: 2.4rem;
+    font-size: 2.5rem;
   }
 
   .target-count {
@@ -1337,8 +1276,8 @@ body.light-mode .dhikr-reward-card {
   }
 
   .counter-progress-ring {
-    width: 90px;
-    height: 90px;
+    width: 95px;
+    height: 95px;
   }
 
   .card-controls {
@@ -1353,11 +1292,11 @@ body.light-mode .dhikr-reward-card {
   }
 
   .circular-bead-counter {
-    width: 195px !important;
-    height: 195px !important;
-    max-width: 195px !important;
-    min-height: 195px !important;
-    margin: 4px auto;
+    width: 205px !important;
+    height: 205px !important;
+    max-width: 205px !important;
+    min-height: 205px !important;
+    margin: 6px auto;
   }
 
   .circular-bead-counter .counter-progress-ring {
@@ -1366,7 +1305,7 @@ body.light-mode .dhikr-reward-card {
   }
 
   .circular-bead-counter .current-count {
-    font-size: 2.2rem;
+    font-size: 2.3rem;
   }
 
   .circular-bead-counter .target-count {
@@ -1374,11 +1313,11 @@ body.light-mode .dhikr-reward-card {
   }
 
   .masbaha-bead {
-  width: 15px;
-  height: 15px;
-  margin-top: -7.5px;
-  margin-left: -7.5px;
-}
+    width: 15px;
+    height: 15px;
+    margin-top: -7.5px;
+    margin-left: -7.5px;
+  }
 
   .masbaha-controls {
     grid-template-columns: 1fr 1fr;
