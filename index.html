@@ -17,8 +17,6 @@
 </head>
 <body class="dark-mode">
 
-  <div class="ambient-glow" aria-hidden="true"></div>
-
   <div class="app-wrapper">
 
     <!-- شريط الرأس العلوي -->
@@ -91,50 +89,64 @@
       </nav>
     </header>
 
-    <!-- عداد رمضان التنازلي المضيء -->
-    <section class="ramadan-countdown-card" id="ramadanCountdownCard">
-      <div class="ramadan-card-header">
-        <div class="ramadan-title-wrap">
-          <span class="crescent-icon">🌙</span>
-          <h2 class="ramadan-title">رمضان قادم</h2>
-        </div>
-        <p class="ramadan-subtitle">استعد لأفضل شهور حياتك</p>
-      </div>
-
-      <div class="countdown-boxes-row">
-        <div class="countdown-box cyan-glow">
-          <span class="countdown-num" id="ramadanDays">00</span>
-          <span class="countdown-label">يوم</span>
-        </div>
-        <span class="countdown-colon">:</span>
-        <div class="countdown-box purple-glow">
-          <span class="countdown-num" id="ramadanHours">00</span>
-          <span class="countdown-label">ساعة</span>
-        </div>
-        <span class="countdown-colon">:</span>
-        <div class="countdown-box yellow-glow">
-          <span class="countdown-num" id="ramadanMinutes">00</span>
-          <span class="countdown-label">دقيقة</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- شريط تقدم القسم الحالي -->
-    <div class="section-progress-bar-container">
-      <div class="section-progress-info">
-        <span id="currentCategoryTitle">أذكار الصباح</span>
-        <span id="categoryProgressRatio">0 / 0 مكتمل</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="categoryProgressBar" style="width: 0%;"></div>
-      </div>
-    </div>
-
     <!-- محتوى التطبيق الرئيسي -->
     <main class="main-content">
 
+      <!-- ============================================== -->
+      <!-- قسم الرئيسية: عداد رمضان والوصول السريع        -->
+      <!-- ============================================== -->
+      <section class="home-view" id="homeView">
+        <div class="ramadan-countdown-card">
+          <div class="ramadan-card-header">
+            <div class="ramadan-title-wrap">
+              <span class="crescent-icon">🌙</span>
+              <h2 class="ramadan-title">رمضان قادم</h2>
+            </div>
+            <p class="ramadan-subtitle">استعد لأفضل شهور حياتك</p>
+          </div>
+
+          <div class="countdown-boxes-row">
+            <div class="countdown-box cyan-glow">
+              <span class="countdown-num" id="ramadanDays">00</span>
+              <span class="countdown-label">يوم</span>
+            </div>
+            <span class="countdown-colon">:</span>
+            <div class="countdown-box purple-glow">
+              <span class="countdown-num" id="ramadanHours">00</span>
+              <span class="countdown-label">ساعة</span>
+            </div>
+            <span class="countdown-colon">:</span>
+            <div class="countdown-box yellow-glow">
+              <span class="countdown-num" id="ramadanMinutes">00</span>
+              <span class="countdown-label">دقيقة</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-nav-card">
+          <h3>ابدأ وردك اليومي:</h3>
+          <div class="quick-links-grid">
+            <button type="button" class="quick-link-btn" id="goSabahBtn">🌅 أذكار الصباح</button>
+            <button type="button" class="quick-link-btn" id="goMasaaBtn">🌇 أذكار المساء</button>
+            <button type="button" class="quick-link-btn" id="goSalahBtn">🕌 بعد الصلاة</button>
+            <button type="button" class="quick-link-btn" id="goMasbahaBtn">📿 المسبحة الإلكترونية</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- شريط تقدم القسم الحالي -->
+      <div class="section-progress-bar-container hidden" id="sectionProgressContainer">
+        <div class="section-progress-info">
+          <span id="currentCategoryTitle">أذكار الصباح</span>
+          <span id="categoryProgressRatio">0 / 0 مكتمل</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="categoryProgressBar" style="width: 0%;"></div>
+        </div>
+      </div>
+
       <!-- بطاقة الذكر والعداد الرئيسي -->
-      <section class="dhikr-card" id="dhikrCard">
+      <section class="dhikr-card hidden" id="dhikrCard">
         <div class="card-header">
           <div class="dhikr-position">
             <span class="badge-index" id="dhikrPositionBadge">ذكر 1 من 31</span>
@@ -232,7 +244,7 @@
         </div>
       </section>
 
-      <!-- واجهة المسبحة الإلكترونية الدائرية ذات الخرز -->
+      <!-- واجهة المسبحة الإلكترونية -->
       <section class="masbaha-view hidden" id="masbahaView">
         <div class="masbaha-card">
           <div class="masbaha-header">
@@ -252,7 +264,7 @@
             <input type="text" id="masbahaCustomInput" class="form-input" placeholder="مثال: لا إله إلا أنت سبحانك إني كنت من الظالمين...">
           </div>
 
-          <!-- قسم تحديد الهدف والعدد المخصص -->
+          <!-- تحديد الهدف والعدد المخصص -->
           <div class="masbaha-target-setting-box">
             <div class="target-box-title">
               <span>🎯 تحديد هدف التسبيح المطلوب:</span>
@@ -284,7 +296,7 @@
             </div>
           </div>
 
-          <!-- زر السبحة الدائرية التفاعلية مع الخرز المتوهج -->
+          <!-- زر السبحة الدائرية التفاعلية -->
           <div class="counter-section">
             <div class="counter-stats-bar" aria-label="إحصائية المسبحة">
               <div class="counter-stat-item completed-item">
@@ -300,16 +312,13 @@
             <button class="huge-counter-btn masbaha-counter-btn circular-bead-counter" id="masbahaCounterBtn" aria-label="تسبيح المسبحة">
               <div class="counter-glow" aria-hidden="true"></div>
               
-              <!-- حلقة خرزات السبحة المتحركة -->
               <div class="beads-ring-container" id="beadsRing"></div>
 
-              <!-- حلقة التقدم الضوئية -->
               <svg class="counter-progress-ring" viewBox="0 0 120 120" width="120" height="120">
                 <circle class="ring-bg" cx="60" cy="60" r="54" />
                 <circle class="ring-fg" id="masbahaProgressRing" cx="60" cy="60" r="54" />
               </svg>
 
-              <!-- الأرقام في المنتصف -->
               <div class="counter-center-content">
                 <span class="current-count" id="masbahaCountDisplay">0</span>
                 <span class="counter-separator">/</span>
@@ -359,9 +368,9 @@
   </div>
 
   <div class="toast-notification hidden" id="toastNotification">
-    <div class="toast-icon">✨</div>
+    <div class="toast-icon">🟢</div>
     <div class="toast-body">
-      <h4 id="toastTitle">تقبل الله طاعتك!</h4>
+      <h4 id="toastTitle">تقبل الله طاعتك</h4>
       <p id="toastMessage"></p>
     </div>
   </div>
@@ -380,7 +389,7 @@
     </div>
   </div>
 
-  <!-- نافذة تعديل هدف التكرار لأي ذكر -->
+  <!-- نافذة تعديل هدف التكرار -->
   <div class="modal-backdrop hidden" id="targetModalBackdrop">
     <div class="modal-dialog target-modal-dialog">
       <div class="modal-header">
