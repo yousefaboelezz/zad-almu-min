@@ -1,20 +1,16 @@
 /**
  * زاد المؤمن - منطق التطبيق التفاعلي (app.js)
- * إدارة الحالة، التخزين المحلي، الأصوات، العدادات، والاهتزاز
+ * إدارة الحالة، عداد رمضان، التاريخ الهجري، سبحة الخرز الدائرية، والهدف المخصص
  */
 
 (function () {
   'use strict';
 
-  // ==========================================
-  // 1. مفاتيح التخزين المحلي (LocalStorage Keys)
-  // ==========================================
   const STORAGE_KEYS = {
     THEME: 'zad_theme',
     CURRENT_CAT: 'zad_current_category',
     CURRENT_INDEX: 'zad_current_index',
     PROGRESS: 'zad_adhkar_progress',
-    STREAK: 'zad_streak_tracker',
     DAILY_TOTAL: 'zad_daily_total',
     SOUND: 'zad_sound_enabled',
     VIBRATE: 'zad_vibrate_enabled',
@@ -23,20 +19,16 @@
     CUSTOM_TARGETS: 'zad_custom_targets'
   };
 
-  // ==========================================
-  // 2. حالة التطبيق (Application State)
-  // ==========================================
   const state = {
     currentCategory: 'sabah',
     currentIndex: 0,
-    progress: {}, // { [dhikrId]: number }
-    customTargets: {}, // { [dhikrId]: number }
-    streak: { count: 1, lastDate: '' },
+    progress: {},
+    customTargets: {},
     dailyTotal: { count: 0, date: '' },
     soundEnabled: true,
     vibrateEnabled: true,
     isFullScreenTap: false,
-    fontSize: 1.55,
+    fontSize: 1.45,
     masbaha: {
       text: 'سُبْحَانَ اللَّهِ',
       count: 0,
@@ -45,30 +37,22 @@
     }
   };
 
-  // محيط الصوت عبر Web Audio API ليعمل دون ملفات خارجية أو إنترنت
   let audioCtx = null;
   function getAudioContext() {
     if (!audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
-      }
+      if (AudioContext) audioCtx = new AudioContext();
     }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   }
 
-  // ==========================================
-  // 3. عناصر الواجهة (DOM Elements)
-  // ==========================================
   const elements = {
     body: document.body,
     themeToggleBtn: document.getElementById('themeToggleBtn'),
     lightIcon: document.querySelector('.light-icon'),
     darkIcon: document.querySelector('.dark-icon'),
-    streakCount: document.getElementById('streakCount'),
+    hijriDateText: document.getElementById('hijriDateText'),
     toggleSoundBtn: document.getElementById('toggleSoundBtn'),
     soundIconOn: document.getElementById('soundIconOn'),
     soundIconOff: document.getElementById('soundIconOff'),
@@ -79,7 +63,11 @@
     categoryProgressRatio: document.getElementById('categoryProgressRatio'),
     categoryProgressBar: document.getElementById('categoryProgressBar'),
 
-    // بطاقة الذكر
+    ramadanCountdownCard: document.getElementById('ramadanCountdownCard'),
+    ramadanDays: document.getElementById('ramadanDays'),
+    ramadanHours: document.getElementById('ramadanHours'),
+    ramadanMinutes: document.getElementById('ramadanMinutes'),
+
     dhikrCard: document.getElementById('dhikrCard'),
     dhikrPositionBadge: document.getElementById('dhikrPositionBadge'),
     dhikrTargetBadge: document.getElementById('dhikrTargetBadge'),
@@ -96,30 +84,25 @@
     mainCounterHint: document.getElementById('mainCounterHint'),
     completionBanner: document.getElementById('completionBanner'),
 
-    // نافذة الهدف المخصص
     targetModalBackdrop: document.getElementById('targetModalBackdrop'),
     closeTargetModalBtn: document.getElementById('closeTargetModalBtn'),
     quickTargetChips: document.getElementById('quickTargetChips'),
     customTargetInput: document.getElementById('customTargetInput'),
     applyCustomTargetBtn: document.getElementById('applyCustomTargetBtn'),
 
-    // أزرار التحكم بحجم الخط
     decreaseFontBtn: document.getElementById('decreaseFontBtn'),
     increaseFontBtn: document.getElementById('increaseFontBtn'),
-
-    // أزرار التحكم بالذكر
     prevDhikrBtn: document.getElementById('prevDhikrBtn'),
     nextDhikrBtn: document.getElementById('nextDhikrBtn'),
     undoCountBtn: document.getElementById('undoCountBtn'),
     resetCountBtn: document.getElementById('resetCountBtn'),
-    copyDhikrBtn: document.getElementById('copyDhikrBtn'),
-    openListModalBtn: document.getElementById('openListModalBtn'),
 
-    // واجهة المسبحة الحرة
     masbahaView: document.getElementById('masbahaView'),
     masbahaSelect: document.getElementById('masbahaSelect'),
     masbahaCustomInput: document.getElementById('masbahaCustomInput'),
     targetChips: document.getElementById('targetChips'),
+    masbahaCustomTargetNumber: document.getElementById('masbahaCustomTargetNumber'),
+    applyMasbahaCustomTargetBtn: document.getElementById('applyMasbahaCustomTargetBtn'),
     masbahaActiveText: document.getElementById('masbahaActiveText'),
     masbahaRewardBox: document.getElementById('masbahaRewardBox'),
     masbahaRewardText: document.getElementById('masbahaRewardText'),
@@ -135,16 +118,10 @@
     masbahaResetBtn: document.getElementById('masbahaResetBtn'),
     dailyTotalCount: document.getElementById('dailyTotalCount'),
 
-    // النوافذ والإشعارات
-    listModalBackdrop: document.getElementById('listModalBackdrop'),
-    modalCategoryTitle: document.getElementById('modalCategoryTitle'),
-    modalDhikrList: document.getElementById('modalDhikrList'),
-    closeModalBtn: document.getElementById('closeModalBtn'),
     toastNotification: document.getElementById('toastNotification'),
     toastTitle: document.getElementById('toastTitle'),
     toastMessage: document.getElementById('toastMessage'),
 
-    // ملء الشاشة
     screenTapOverlay: document.getElementById('screenTapOverlay'),
     exitFullScreenTapBtn: document.getElementById('exitFullScreenTapBtn'),
     overlayDhikrText: document.getElementById('overlayDhikrText'),
@@ -152,60 +129,43 @@
     overlayTargetCount: document.getElementById('overlayTargetCount')
   };
 
-  // محيط حلقة التقدم الدائرية (2 * PI * 54)
   const RING_CIRCUMFERENCE = 339.292;
+  let currentBeadRotation = 0;
+  const TOTAL_BEADS = 33;
 
-  // ==========================================
-  // 4. استرجاع وحفظ الحالة (LocalStorage Helper)
-  // ==========================================
   function loadPersistedState() {
-    // الوضع اللوني
-    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
     setTheme(savedTheme, false);
 
-    // حجم الخط المحفوظ
     const savedFontSize = localStorage.getItem(STORAGE_KEYS.FONT_SIZE);
-    if (savedFontSize) {
-      applyFontSize(savedFontSize);
-    }
+    if (savedFontSize) applyFontSize(savedFontSize);
 
-    // الأهداف المخصصة للأذكار
     try {
       const savedTargets = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOM_TARGETS));
-      if (savedTargets && typeof savedTargets === 'object') {
-        state.customTargets = savedTargets;
-      }
+      if (savedTargets && typeof savedTargets === 'object') state.customTargets = savedTargets;
     } catch (e) {
       state.customTargets = {};
     }
 
-    // الصوت والاهتزاز
     state.soundEnabled = localStorage.getItem(STORAGE_KEYS.SOUND) !== 'false';
     state.vibrateEnabled = localStorage.getItem(STORAGE_KEYS.VIBRATE) !== 'false';
     updateSoundVibrateUI();
 
-    // القسم وموضع التوقف
     const savedCat = localStorage.getItem(STORAGE_KEYS.CURRENT_CAT);
     if (savedCat && ADHKAR_CATEGORIES.some(c => c.id === savedCat)) {
       state.currentCategory = savedCat;
     }
 
     const savedIndex = parseInt(localStorage.getItem(STORAGE_KEYS.CURRENT_INDEX), 10);
-    if (!isNaN(savedIndex) && savedIndex >= 0) {
-      state.currentIndex = savedIndex;
-    }
+    if (!isNaN(savedIndex) && savedIndex >= 0) state.currentIndex = savedIndex;
 
-    // تقدم العدادات
     try {
       const savedProgress = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROGRESS));
-      if (savedProgress && typeof savedProgress === 'object') {
-        state.progress = savedProgress;
-      }
+      if (savedProgress && typeof savedProgress === 'object') state.progress = savedProgress;
     } catch (e) {
       state.progress = {};
     }
 
-    // المسبحة الحرة
     try {
       const savedMasbaha = JSON.parse(localStorage.getItem(STORAGE_KEYS.MASBAHA_STATE));
       if (savedMasbaha && typeof savedMasbaha === 'object') {
@@ -213,8 +173,7 @@
       }
     } catch (e) {}
 
-    // أيام الالتزام والإجمالي اليومي
-    updateStreakAndDailyTotals();
+    updateDailyTotals();
   }
 
   function saveProgress() {
@@ -230,58 +189,72 @@
     localStorage.setItem(STORAGE_KEYS.MASBAHA_STATE, JSON.stringify(state.masbaha));
   }
 
-  // ==========================================
-  // 5. حساب أيام الالتزام (Streak Days Tracker)
-  // ==========================================
-  function getTodayString() {
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    const d = String(today.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+  function renderHijriDate() {
+    try {
+      const today = new Date();
+      const hijriFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      if (elements.hijriDateText) {
+        elements.hijriDateText.textContent = hijriFormatter.format(today);
+      }
+    } catch (err) {
+      if (elements.hijriDateText) elements.hijriDateText.textContent = 'اليوم الهجري المبارك';
+    }
   }
 
-  function updateStreakAndDailyTotals() {
-    const today = getTodayString();
-    
-    // 1. حساب الـ Streak
-    let streakData = { count: 1, lastDate: today };
-    try {
-      const savedStreak = JSON.parse(localStorage.getItem(STORAGE_KEYS.STREAK));
-      if (savedStreak && savedStreak.lastDate) {
-        streakData = savedStreak;
-      }
-    } catch (e) {}
+  function getNextRamadanDate() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const ramadanDates = [
+      new Date(currentYear, 1, 18),
+      new Date(currentYear + 1, 1, 8),
+      new Date(currentYear + 2, 0, 28)
+    ];
 
-    if (streakData.lastDate !== today) {
-      const last = new Date(streakData.lastDate);
-      const curr = new Date(today);
-      const diffDays = Math.round((curr - last) / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) {
-        // يوم متتالي بالضبط
-        streakData.count += 1;
-        streakData.lastDate = today;
-      } else if (diffDays > 1) {
-        // انقطع الالتزام لأكثر من يوم
-        streakData.count = 1;
-        streakData.lastDate = today;
-      }
-      localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(streakData));
+    for (let d of ramadanDates) {
+      if (d.getTime() > now.getTime()) return d;
     }
-    state.streak = streakData;
-    elements.streakCount.textContent = streakData.count;
+    return new Date(currentYear + 1, 1, 8);
+  }
 
-    // 2. إجمالي التسبيح اليومي
+  function updateRamadanCountdown() {
+    const targetDate = getNextRamadanDate();
+    const now = new Date().getTime();
+    const diff = targetDate.getTime() - now;
+
+    if (diff <= 0) {
+      if (elements.ramadanDays) elements.ramadanDays.textContent = '00';
+      if (elements.ramadanHours) elements.ramadanHours.textContent = '00';
+      if (elements.ramadanMinutes) elements.ramadanMinutes.textContent = '00';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (elements.ramadanDays) elements.ramadanDays.textContent = String(days).padStart(2, '0');
+    if (elements.ramadanHours) elements.ramadanHours.textContent = String(hours).padStart(2, '0');
+    if (elements.ramadanMinutes) elements.ramadanMinutes.textContent = String(minutes).padStart(2, '0');
+  }
+
+  function getTodayString() {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  }
+
+  function updateDailyTotals() {
+    const today = getTodayString();
     let dailyData = { date: today, count: 0 };
     try {
       const savedDaily = JSON.parse(localStorage.getItem(STORAGE_KEYS.DAILY_TOTAL));
-      if (savedDaily && savedDaily.date === today) {
-        dailyData = savedDaily;
-      }
+      if (savedDaily && savedDaily.date === today) dailyData = savedDaily;
     } catch (e) {}
     state.dailyTotal = dailyData;
-    elements.dailyTotalCount.textContent = dailyData.count;
+    if (elements.dailyTotalCount) elements.dailyTotalCount.textContent = dailyData.count;
   }
 
   function incrementDailyTotal() {
@@ -291,34 +264,26 @@
       state.dailyTotal.count = 0;
     }
     state.dailyTotal.count += 1;
-    elements.dailyTotalCount.textContent = state.dailyTotal.count;
+    if (elements.dailyTotalCount) elements.dailyTotalCount.textContent = state.dailyTotal.count;
     localStorage.setItem(STORAGE_KEYS.DAILY_TOTAL, JSON.stringify(state.dailyTotal));
   }
 
-  // ==========================================
-  // 6. المؤثرات الصوتية والاهتزازية (Audio & Haptic)
-  // ==========================================
   function playCompletionChime() {
     if (!state.soundEnabled) return;
     try {
       const ctx = getAudioContext();
       if (!ctx) return;
-      // نغمة خافتة وجميلة عند إتمام الذكر
-      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+      const notes = [523.25, 659.25, 783.99];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
-
         gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.08);
         gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + idx * 0.08 + 0.03);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.4);
-
         osc.connect(gain);
         gain.connect(ctx.destination);
-
         osc.start(ctx.currentTime + idx * 0.08);
         osc.stop(ctx.currentTime + idx * 0.08 + 0.4);
       });
@@ -327,16 +292,10 @@
 
   function triggerHaptic(type = 'tap') {
     if (!state.vibrateEnabled || !navigator.vibrate) return;
-    if (type === 'tap') {
-      navigator.vibrate(15); // اهتزاز تفاعلي خفيف للغاية وناعم على الهواتف
-    } else if (type === 'complete' || type === 'target_reached') {
-      navigator.vibrate([30, 50, 30]); // اهتزاز ناعم عند الوصول للهدف أو الإتمام
-    }
+    if (type === 'tap') navigator.vibrate(15);
+    else if (type === 'target_reached' || type === 'complete') navigator.vibrate([30, 50, 30]);
   }
 
-  // ==========================================
-  // 7. إدارة المظهر والأوضاع (Theme & Settings)
-  // ==========================================
   function setTheme(theme, save = true) {
     if (theme === 'dark') {
       elements.body.classList.remove('light-mode');
@@ -349,9 +308,7 @@
       elements.lightIcon.classList.remove('hidden');
       elements.darkIcon.classList.add('hidden');
     }
-    if (save) {
-      localStorage.setItem(STORAGE_KEYS.THEME, theme);
-    }
+    if (save) localStorage.setItem(STORAGE_KEYS.THEME, theme);
   }
 
   function toggleTheme() {
@@ -369,30 +326,17 @@
       elements.soundIconOff.classList.remove('hidden');
       elements.toggleSoundBtn.style.color = 'var(--text-muted)';
     }
-
     elements.toggleVibrateBtn.style.color = state.vibrateEnabled ? '' : 'var(--text-muted)';
   }
 
-  // التحكم في حجم خط الذكر (A+ / A-)
   function applyFontSize(size) {
-    const parsed = parseFloat(size) || 1.55;
-    const clamped = Math.max(1.15, Math.min(2.4, parsed));
+    const parsed = parseFloat(size) || 1.45;
+    const clamped = Math.max(1.1, Math.min(2.4, parsed));
     state.fontSize = Number(clamped.toFixed(2));
     document.documentElement.style.setProperty('--dhikr-font-size', `${state.fontSize}rem`);
     localStorage.setItem(STORAGE_KEYS.FONT_SIZE, state.fontSize.toString());
   }
 
-  function increaseFontSize() {
-    applyFontSize(state.fontSize + 0.15);
-  }
-
-  function decreaseFontSize() {
-    applyFontSize(state.fontSize - 0.15);
-  }
-
-  // ==========================================
-  // 8. بناء الواجهة وتبديل الأقسام
-  // ==========================================
   function renderCategoriesTabs() {
     elements.categoriesTabs.innerHTML = '';
     ADHKAR_CATEGORIES.forEach(cat => {
@@ -419,7 +363,6 @@
     state.currentIndex = 0;
     saveCurrentPosition();
 
-    // تحديث التبويبات النشطة
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.id === categoryId);
     });
@@ -432,16 +375,17 @@
     if (state.currentCategory === 'masbaha') {
       elements.dhikrCard.classList.add('hidden');
       elements.masbahaView.classList.remove('hidden');
+      if (elements.ramadanCountdownCard) elements.ramadanCountdownCard.classList.add('hidden');
       renderMasbahaView();
     } else {
       elements.dhikrCard.classList.remove('hidden');
       elements.masbahaView.classList.add('hidden');
+      if (elements.ramadanCountdownCard) elements.ramadanCountdownCard.classList.remove('hidden');
       renderActiveDhikr();
     }
     updateCategoryProgress();
   }
 
-  // صياغة عربية بليغة للتكرار
   function formatArabicRepetition(count) {
     if (count === 1) return 'مرة واحدة';
     if (count === 2) return 'مرتان';
@@ -449,7 +393,6 @@
     return `${count} مرة`;
   }
 
-  // الحصول على هدف الذكر (المخصص أو الأصلي)
   function getDhikrTarget(item) {
     if (!item) return 1;
     if (state.customTargets && state.customTargets[item.id] && state.customTargets[item.id] > 0) {
@@ -458,9 +401,6 @@
     return item.count || 1;
   }
 
-  // ==========================================
-  // 9. عرض الذكر الحالي في البطاقة
-  // ==========================================
   function getCurrentCategoryData() {
     return ADHKAR_CATEGORIES.find(c => c.id === state.currentCategory) || ADHKAR_CATEGORIES[0];
   }
@@ -486,7 +426,6 @@
     elements.dhikrTargetBadge.textContent = `التكرار المطلوب: ${formatArabicRepetition(target)}${isCustom ? ' (مخصص ✎)' : ''}`;
     elements.dhikrText.textContent = item.text;
 
-    // الفضل أو المصدر
     if (item.reward && item.reward.trim().length > 0) {
       elements.dhikrRewardText.textContent = item.reward;
       elements.dhikrRewardBox.classList.remove('hidden');
@@ -494,7 +433,6 @@
       elements.dhikrRewardBox.classList.add('hidden');
     }
 
-    // العداد والإحصائيات السريعة (المكتمل والمتبقي)
     const current = state.progress[item.id] || 0;
     const remaining = Math.max(0, target - current);
     elements.currentCountDisplay.textContent = current;
@@ -503,12 +441,10 @@
     if (elements.completedCountBadge) elements.completedCountBadge.textContent = current;
     if (elements.remainingCountBadge) elements.remainingCountBadge.textContent = remaining;
 
-    // تحديث حلقة التقدم الدائرية
     const progressRatio = Math.min(current / target, 1);
     const offset = RING_CIRCUMFERENCE - (progressRatio * RING_CIRCUMFERENCE);
     elements.counterProgressRing.style.strokeDashoffset = offset;
 
-    // حالة الإتمام للزر والبانر
     if (current >= target) {
       elements.mainCounterBtn.classList.add('completed');
       if (elements.completionBanner) elements.completionBanner.classList.remove('hidden');
@@ -519,7 +455,6 @@
       if (elements.mainCounterHint) elements.mainCounterHint.textContent = 'اضغط للتسبيح';
     }
 
-    // تحديث شاشة النقر الكامل إن كانت نشطة
     if (state.isFullScreenTap) {
       elements.overlayDhikrText.textContent = item.text;
       elements.overlayCurrentCount.textContent = current;
@@ -530,7 +465,7 @@
   function updateCategoryProgress() {
     const cat = getCurrentCategoryData();
     if (state.currentCategory === 'masbaha') {
-      elements.categoryProgressRatio.textContent = 'مسبحة حرة';
+      elements.categoryProgressRatio.textContent = 'مسبحة إلكترونية';
       elements.categoryProgressBar.style.width = '100%';
       return;
     }
@@ -547,16 +482,8 @@
     const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
     elements.categoryProgressRatio.textContent = `${completedItems} / ${totalItems} مكتمل (${percent}%)`;
     elements.categoryProgressBar.style.width = `${percent}%`;
-
-    // إذا أتم كل أذكار القسم
-    if (completedItems === totalItems && totalItems > 0) {
-      // إشعار تهنئة خفيف
-    }
   }
 
-  // ==========================================
-  // 10. منطق التسبيح والعد (Counter Handlers)
-  // ==========================================
   function handleMainCounterTap() {
     const item = getCurrentDhikrItem();
     if (!item) return;
@@ -564,33 +491,20 @@
     const target = getDhikrTarget(item);
     let current = state.progress[item.id] || 0;
 
-    // وميض لمس بصري
-    elements.mainCounterBtn.classList.remove('pulse-tap');
-    void elements.mainCounterBtn.offsetWidth; // Trigger reflow
-    elements.mainCounterBtn.classList.add('pulse-tap');
-
-    // إذا كان الذكر مكتملاً بالفعل وضغط المستخدم مجدداً، ينتقل تلقائياً للذكر التالي لتسهيل الجلسة
     if (current >= target) {
       goToNextDhikr();
       return;
     }
 
-    // زيادة العداد
     current += 1;
     state.progress[item.id] = current;
     saveProgress();
     incrementDailyTotal();
-
-    // اهتزاز تفاعلي خفيف للغاية وناعم
     triggerHaptic('tap');
 
-    // هل وصل للهدف الآن؟
     if (current === target) {
       playCompletionChime();
       triggerHaptic('target_reached');
-      showCelebrationSpark();
-
-      // فحص إذا انتهى القسم كاملاً
       checkCategoryCompletion();
     }
 
@@ -625,7 +539,6 @@
       return;
     }
 
-    // خطوة تأكيد ثنائية لحماية المستخدم من التصفير غير المقصود
     if (!elements.resetCountBtn.classList.contains('confirm-danger')) {
       elements.resetCountBtn.classList.add('confirm-danger');
       const span = elements.resetCountBtn.querySelector('span');
@@ -639,7 +552,6 @@
       return;
     }
 
-    // تم النقر للمرة الثانية - تنفيذ التصفير
     revertResetButton();
     state.progress[item.id] = 0;
     saveProgress();
@@ -664,11 +576,7 @@
   function goToNextDhikr() {
     revertResetButton();
     const cat = getCurrentCategoryData();
-    if (state.currentIndex < cat.items.length - 1) {
-      state.currentIndex += 1;
-    } else {
-      state.currentIndex = 0; // حلقة مستمرة
-    }
+    state.currentIndex = (state.currentIndex < cat.items.length - 1) ? state.currentIndex + 1 : 0;
     saveCurrentPosition();
     renderActiveDhikr();
     triggerHaptic('tap');
@@ -677,11 +585,7 @@
   function goToPrevDhikr() {
     revertResetButton();
     const cat = getCurrentCategoryData();
-    if (state.currentIndex > 0) {
-      state.currentIndex -= 1;
-    } else {
-      state.currentIndex = cat.items.length - 1;
-    }
+    state.currentIndex = (state.currentIndex > 0) ? state.currentIndex - 1 : cat.items.length - 1;
     saveCurrentPosition();
     renderActiveDhikr();
     triggerHaptic('tap');
@@ -697,13 +601,10 @@
     });
 
     if (allDone) {
-      showToast('مبارك! تقبل الله طاعتك ', `لقد أتممت جميع ${cat.name} كاملة بنجاح.`);
+      showToast('مبارك! تقبل الله طاعتك ✨', `لقد أتممت جميع أذكار ${cat.name} بنجاح.`);
     }
   }
 
-  // ==========================================
-  // إدارة نافذة تحديد الهدف المخصص (Custom Target Modal)
-  // ==========================================
   function openTargetModal() {
     const item = getCurrentDhikrItem();
     if (!item) return;
@@ -726,15 +627,11 @@
       });
     }
 
-    if (elements.targetModalBackdrop) {
-      elements.targetModalBackdrop.classList.remove('hidden');
-    }
+    if (elements.targetModalBackdrop) elements.targetModalBackdrop.classList.remove('hidden');
   }
 
   function closeTargetModal() {
-    if (elements.targetModalBackdrop) {
-      elements.targetModalBackdrop.classList.add('hidden');
-    }
+    if (elements.targetModalBackdrop) elements.targetModalBackdrop.classList.add('hidden');
   }
 
   function setDhikrTarget(targetValue) {
@@ -750,17 +647,13 @@
       renderActiveDhikr();
       updateCategoryProgress();
       triggerHaptic('tap');
-      showToast('هدف الذكر', `تمت استعادة التكرار الأصلي (${item.count} مرة).`);
       return;
     }
 
     const parsed = parseInt(targetValue, 10);
-    if (isNaN(parsed) || parsed <= 0) {
-      showToast('تنبيه', 'يرجى إدخال عدد صحيح أكبر من الصفر.');
-      return;
-    }
+    if (isNaN(parsed) || parsed <= 0) return;
 
-    const clamped = Math.min(Math.max(parsed, 1), 9999);
+    const clamped = Math.min(Math.max(parsed, 1), 99999);
     state.customTargets[item.id] = clamped;
     localStorage.setItem(STORAGE_KEYS.CUSTOM_TARGETS, JSON.stringify(state.customTargets));
 
@@ -768,12 +661,50 @@
     renderActiveDhikr();
     updateCategoryProgress();
     triggerHaptic('tap');
-    showToast('تم تحديث الهدف', `تم تحديد هدف التكرار لهذا الذكر إلى ${clamped} مرة.`);
   }
 
-  // ==========================================
-  // 11. واجهة المسبحة الحرة (Masbaha Logic)
-  // ==========================================
+  // ==========================================================
+  // منطق سبحة الخرز الدائرية وتحديد الهدف المخصص
+  // ==========================================================
+  function createBeadsRing() {
+    const ring = document.getElementById('beadsRing');
+    if (!ring) return;
+    ring.innerHTML = '';
+    
+    const isMobile = window.innerWidth <= 640;
+    const radius = isMobile ? 100 : 118; // المسافة المحيطية الدائرية
+
+    for (let i = 0; i < TOTAL_BEADS; i++) {
+      const bead = document.createElement('div');
+      bead.className = 'masbaha-bead';
+      const angle = (i * (360 / TOTAL_BEADS)) * (Math.PI / 180);
+      const x = Math.round(radius * Math.cos(angle));
+      const y = Math.round(radius * Math.sin(angle));
+      
+      bead.style.transform = `translate(${x}px, ${y}px)`;
+      bead.dataset.index = i;
+      ring.appendChild(bead);
+    }
+  }
+
+  function rotateBeadsStep(direction = 1) {
+    const ring = document.getElementById('beadsRing');
+    if (!ring) return;
+
+    const stepDeg = (360 / TOTAL_BEADS) * direction;
+    currentBeadRotation += stepDeg;
+    ring.style.setProperty('--bead-rotation', `${currentBeadRotation}deg`);
+
+    const beads = ring.querySelectorAll('.masbaha-bead');
+    const activeIndex = (state.masbaha.count) % TOTAL_BEADS;
+    beads.forEach((b, idx) => {
+      if (idx === activeIndex) {
+        b.classList.add('active-spark');
+        setTimeout(() => b.classList.remove('active-spark'), 200);
+      }
+    });
+  }
+
   function initMasbahaPresets() {
     const masbahaCat = ADHKAR_CATEGORIES.find(c => c.id === 'masbaha');
     if (!masbahaCat) return;
@@ -786,7 +717,6 @@
       elements.masbahaSelect.appendChild(opt);
     });
 
-    // عند تغيير الاختيار
     elements.masbahaSelect.addEventListener('change', (e) => {
       const selectedItem = masbahaCat.items[e.target.value];
       if (selectedItem) {
@@ -798,7 +728,6 @@
       }
     });
 
-    // عند إدخال ذكر مخصص
     elements.masbahaCustomInput.addEventListener('input', (e) => {
       const customVal = e.target.value.trim();
       if (customVal.length > 0) {
@@ -809,20 +738,54 @@
       }
     });
 
-    // اختيار أهداف المسبحة (Target Chips)
     elements.targetChips.querySelectorAll('.chip-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         elements.targetChips.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.masbaha.target = parseInt(btn.dataset.target, 10);
+        state.masbaha.count = 0; // تصفير العداد للبدء في الهدف الجديد
+        if (elements.masbahaCustomTargetNumber) elements.masbahaCustomTargetNumber.value = '';
         updateMasbahaDisplay();
         saveMasbahaState();
+        triggerHaptic('tap');
       });
     });
+
+    if (elements.applyMasbahaCustomTargetBtn) {
+      elements.applyMasbahaCustomTargetBtn.addEventListener('click', applyCustomMasbahaTarget);
+    }
+    if (elements.masbahaCustomTargetNumber) {
+      elements.masbahaCustomTargetNumber.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          applyCustomMasbahaTarget();
+        }
+      });
+    }
+  }
+
+  function applyCustomMasbahaTarget() {
+    const inputVal = elements.masbahaCustomTargetNumber ? elements.masbahaCustomTargetNumber.value.trim() : '';
+    const val = parseInt(inputVal, 10);
+
+    if (!isNaN(val) && val > 0) {
+      if (elements.targetChips) {
+        elements.targetChips.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+      }
+      state.masbaha.target = val;
+      state.masbaha.count = 0;
+      saveMasbahaState();
+      updateMasbahaDisplay();
+      showToast('تم تطبيق الهدف', `تم ضبط عداد المسبحة على ${val} تسبيحة.`);
+      triggerHaptic('tap');
+    } else {
+      showToast('تنبيه', 'يرجى كتابة رقم صحيح أكبر من الصفر.');
+    }
   }
 
   function renderMasbahaView() {
     updateMasbahaDisplay();
+    createBeadsRing();
   }
 
   function updateMasbahaDisplay() {
@@ -845,7 +808,6 @@
       elements.masbahaRemainingBadge.textContent = target === 0 ? '∞' : Math.max(0, target - count);
     }
 
-    // حلقة التقدم
     if (target > 0) {
       const ratio = Math.min(count / target, 1);
       elements.masbahaProgressRing.style.strokeDashoffset = RING_CIRCUMFERENCE - (ratio * RING_CIRCUMFERENCE);
@@ -867,21 +829,22 @@
   }
 
   function handleMasbahaCounterTap() {
-    elements.masbahaCounterBtn.classList.remove('pulse-tap');
-    void elements.masbahaCounterBtn.offsetWidth;
-    elements.masbahaCounterBtn.classList.add('pulse-tap');
+    if (elements.masbahaCounterBtn) {
+      elements.masbahaCounterBtn.classList.remove('pulse-tap');
+      void elements.masbahaCounterBtn.offsetWidth;
+      elements.masbahaCounterBtn.classList.add('pulse-tap');
+    }
 
     state.masbaha.count += 1;
     saveMasbahaState();
     incrementDailyTotal();
-
-    // اهتزاز تفاعلي خفيف للغاية وناعم
     triggerHaptic('tap');
+
+    rotateBeadsStep(1);
 
     if (state.masbaha.target > 0 && state.masbaha.count === state.masbaha.target) {
       playCompletionChime();
       triggerHaptic('complete');
-      showCelebrationSpark();
       showToast('ما شاء الله!', `لقد أكملت الورد المستهدف (${state.masbaha.target} تسبيحة) بنجاح.`);
     }
 
@@ -892,6 +855,7 @@
     revertMasbahaResetButton();
     if (state.masbaha.count > 0) {
       state.masbaha.count -= 1;
+      rotateBeadsStep(-1);
       saveMasbahaState();
       updateMasbahaDisplay();
       triggerHaptic('tap');
@@ -900,12 +864,8 @@
 
   let masbahaResetTimeout = null;
   function resetMasbaha() {
-    if (state.masbaha.count === 0) {
-      showToast('العداد مصفّر', 'عداد المسبحة مصفّر بالفعل.');
-      return;
-    }
+    if (state.masbaha.count === 0) return;
 
-    // تأكيد ثنائي لمنع تصفير المسبحة خطأً
     if (!elements.masbahaResetBtn.classList.contains('confirm-danger')) {
       elements.masbahaResetBtn.classList.add('confirm-danger');
       const span = elements.masbahaResetBtn.querySelector('span');
@@ -919,13 +879,15 @@
       return;
     }
 
-    // تم النقر ثانية للتأكيد
     revertMasbahaResetButton();
     state.masbaha.count = 0;
+    currentBeadRotation = 0;
+    const ring = document.getElementById('beadsRing');
+    if (ring) ring.style.setProperty('--bead-rotation', '0deg');
+
     saveMasbahaState();
     updateMasbahaDisplay();
     triggerHaptic('tap');
-    showToast('تم التصفير', 'تمت إعادة تعيين عداد المسبحة إلى الصفر.');
   }
 
   function revertMasbahaResetButton() {
@@ -940,47 +902,6 @@
     }
   }
 
-  // ==========================================
-  // 12. الفهرس والتنقل السريع (Index Modal)
-  // ==========================================
-  function openListModal() {
-    const cat = getCurrentCategoryData();
-    elements.modalCategoryTitle.textContent = `فهرس ${cat.name}`;
-    elements.modalDhikrList.innerHTML = '';
-
-    cat.items.forEach((item, idx) => {
-      const c = state.progress[item.id] || 0;
-      const target = getDhikrTarget(item);
-      const isDone = c >= target;
-      const isActive = idx === state.currentIndex;
-
-      const row = document.createElement('div');
-      row.className = `modal-dhikr-item ${isActive ? 'active' : ''}`;
-      row.innerHTML = `
-        <span class="modal-dhikr-preview">${idx + 1}. ${item.text.replace(/\n/g, ' ')}</span>
-        <div class="modal-dhikr-meta">
-          <span class="modal-status-badge ${isDone ? 'done' : ''}">${c} / ${target}</span>
-        </div>
-      `;
-      row.addEventListener('click', () => {
-        state.currentIndex = idx;
-        saveCurrentPosition();
-        renderActiveDhikr();
-        closeListModal();
-      });
-      elements.modalDhikrList.appendChild(row);
-    });
-
-    elements.listModalBackdrop.classList.remove('hidden');
-  }
-
-  function closeListModal() {
-    elements.listModalBackdrop.classList.add('hidden');
-  }
-
-  // ==========================================
-  // 13. وضع التسبيح بالنقر على كامل الشاشة
-  // ==========================================
   function enterFullScreenTap() {
     state.isFullScreenTap = true;
     renderActiveDhikr();
@@ -992,9 +913,22 @@
     elements.screenTapOverlay.classList.add('hidden');
   }
 
-  // ==========================================
-  // 14. الإشعارات والنسخ والاحتفال
-  // ==========================================
+  function handleScreenTap(e) {
+    if (e.target.closest('#exitFullScreenTapBtn')) return;
+    e.preventDefault();
+
+    if (state.currentCategory === 'masbaha') {
+      handleMasbahaCounterTap();
+      elements.overlayCurrentCount.textContent = state.masbaha.count;
+    } else {
+      handleMainCounterTap();
+      const item = getCurrentDhikrItem();
+      if (item) {
+        elements.overlayCurrentCount.textContent = state.progress[item.id] || 0;
+      }
+    }
+  }
+
   let toastTimeout = null;
   function showToast(title, message) {
     elements.toastTitle.textContent = title;
@@ -1004,209 +938,107 @@
     if (toastTimeout) clearTimeout(toastTimeout);
     toastTimeout = setTimeout(() => {
       elements.toastNotification.classList.add('hidden');
-    }, 4000);
+    }, 3500);
   }
 
-  function copyCurrentDhikr() {
-    const item = getCurrentDhikrItem();
-    if (!item) return;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(item.text).then(() => {
-        showToast('تم النسخ بنجاح', 'تم نسخ نص الذكر إلى الحافظة.');
-      }).catch(() => fallbackCopy(item.text));
-    } else {
-      fallbackCopy(item.text);
-    }
-  }
-
-  function fallbackCopy(text) {
-    const tempInput = document.createElement('textarea');
-    tempInput.value = text;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempInput);
-    showToast('تم النسخ بنجاح', 'تم نسخ نص الذكر إلى الحافظة.');
-  }
-
-  function showCelebrationSpark() {
-    // وميض احتفالي ناعم
-    elements.dhikrCard.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.45)';
-    setTimeout(() => {
-      elements.dhikrCard.style.boxShadow = '';
-    }, 600);
-  }
-
-  // ==========================================
-  // 15. اختصارات لوحة المفاتيح (Keyboard Shortcuts)
-  // ==========================================
   function handleKeyDown(e) {
-    // تجاهل لو كان المستخدم يكتب في حقل إدخال
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    // زر المسافة (Space) للتسبيح
     if (e.code === 'Space') {
       e.preventDefault();
-      if (state.currentCategory === 'masbaha') {
-        handleMasbahaCounterTap();
-      } else {
-        handleMainCounterTap();
-      }
-    }
-    // السهم لليسار (التالي في RTL)
-    else if (e.code === 'ArrowLeft') {
+      if (state.currentCategory === 'masbaha') handleMasbahaCounterTap();
+      else handleMainCounterTap();
+    } else if (e.code === 'ArrowLeft') {
       e.preventDefault();
       if (state.currentCategory !== 'masbaha') goToNextDhikr();
-    }
-    // السهم لليمين (السابق في RTL)
-    else if (e.code === 'ArrowRight') {
+    } else if (e.code === 'ArrowRight') {
       e.preventDefault();
       if (state.currentCategory !== 'masbaha') goToPrevDhikr();
-    }
-    // حرف Z أو Backspace للتراجع
-    else if (e.code === 'KeyZ' || e.code === 'Backspace') {
+    } else if (e.code === 'KeyZ' || e.code === 'Backspace') {
       e.preventDefault();
-      if (state.currentCategory === 'masbaha') {
-        undoMasbaha();
-      } else {
-        undoCurrentDhikr();
-      }
-    }
-    // حرف R للتصفير
-    else if (e.code === 'KeyR') {
-      e.preventDefault();
-      if (state.currentCategory === 'masbaha') {
-        resetMasbaha();
-      } else {
-        resetCurrentDhikr();
-      }
-    }
-    // زر الهروب Escape لإغلاق النوافذ
-    else if (e.code === 'Escape') {
-      closeListModal();
+      if (state.currentCategory === 'masbaha') undoMasbaha();
+      else undoCurrentDhikr();
+    } else if (e.code === 'Escape') {
       closeTargetModal();
       if (state.isFullScreenTap) exitFullScreenTap();
     }
   }
 
-  // ==========================================
-  // 16. ربط الأحداث والتهيئة الأولية (Init)
-  // ==========================================
   function bindEvents() {
-    // تبويبات الأقسام (تفويض النقر لضمان استجابة فورية وقوية)
-    if (elements.categoriesTabs) {
-      elements.categoriesTabs.addEventListener('click', (e) => {
-        const btn = e.target.closest('.tab-btn');
-        if (btn && btn.dataset.id) {
-          e.preventDefault();
-          switchCategory(btn.dataset.id);
-        }
-      });
-    }
-
-    // أزرار الرأس
     elements.themeToggleBtn.addEventListener('click', toggleTheme);
+    
     elements.toggleSoundBtn.addEventListener('click', () => {
       state.soundEnabled = !state.soundEnabled;
       localStorage.setItem(STORAGE_KEYS.SOUND, state.soundEnabled);
       updateSoundVibrateUI();
       triggerHaptic('tap');
     });
+
     elements.toggleVibrateBtn.addEventListener('click', () => {
       state.vibrateEnabled = !state.vibrateEnabled;
       localStorage.setItem(STORAGE_KEYS.VIBRATE, state.vibrateEnabled);
       updateSoundVibrateUI();
       triggerHaptic('tap');
     });
+
     elements.toggleFullScreenTapBtn.addEventListener('click', enterFullScreenTap);
     elements.exitFullScreenTapBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       exitFullScreenTap();
     });
 
-    // التسبيح عبر النقر على شاشة النقر الكامل
-    elements.screenTapOverlay.addEventListener('click', () => {
-      if (state.currentCategory === 'masbaha') {
-        handleMasbahaCounterTap();
-      } else {
-        handleMainCounterTap();
-      }
-    });
+    elements.screenTapOverlay.addEventListener('pointerdown', handleScreenTap);
 
-    // التحكم في حجم خط الذكر
-    if (elements.decreaseFontBtn) elements.decreaseFontBtn.addEventListener('click', decreaseFontSize);
-    if (elements.increaseFontBtn) elements.increaseFontBtn.addEventListener('click', increaseFontSize);
+    if (elements.decreaseFontBtn) elements.decreaseFontBtn.addEventListener('click', () => applyFontSize(state.fontSize - 0.15));
+    if (elements.increaseFontBtn) elements.increaseFontBtn.addEventListener('click', () => applyFontSize(state.fontSize + 0.15));
 
-    // نافذة تعديل هدف التكرار المخصص
-    if (elements.openTargetModalBtn) {
-      elements.openTargetModalBtn.addEventListener('click', openTargetModal);
-    }
-    if (elements.closeTargetModalBtn) {
-      elements.closeTargetModalBtn.addEventListener('click', closeTargetModal);
-    }
+    if (elements.openTargetModalBtn) elements.openTargetModalBtn.addEventListener('click', openTargetModal);
+    if (elements.closeTargetModalBtn) elements.closeTargetModalBtn.addEventListener('click', closeTargetModal);
     if (elements.targetModalBackdrop) {
       elements.targetModalBackdrop.addEventListener('click', (e) => {
         if (e.target === elements.targetModalBackdrop) closeTargetModal();
       });
     }
+
     if (elements.quickTargetChips) {
       elements.quickTargetChips.addEventListener('click', (e) => {
         const chip = e.target.closest('.target-choice-chip');
-        if (chip && chip.dataset.target) {
-          setDhikrTarget(chip.dataset.target);
-        }
-      });
-    }
-    if (elements.applyCustomTargetBtn) {
-      elements.applyCustomTargetBtn.addEventListener('click', () => {
-        if (elements.customTargetInput) {
-          setDhikrTarget(elements.customTargetInput.value.trim());
-        }
-      });
-    }
-    if (elements.customTargetInput) {
-      elements.customTargetInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          setDhikrTarget(elements.customTargetInput.value.trim());
-        }
+        if (chip && chip.dataset.target) setDhikrTarget(chip.dataset.target);
       });
     }
 
-    // زر العداد وأدوات بطاقة الذكر
+    if (elements.applyCustomTargetBtn) {
+      elements.applyCustomTargetBtn.addEventListener('click', () => {
+        if (elements.customTargetInput) setDhikrTarget(elements.customTargetInput.value.trim());
+      });
+    }
+
     elements.mainCounterBtn.addEventListener('click', handleMainCounterTap);
     elements.nextDhikrBtn.addEventListener('click', goToNextDhikr);
     elements.prevDhikrBtn.addEventListener('click', goToPrevDhikr);
     elements.undoCountBtn.addEventListener('click', undoCurrentDhikr);
     elements.resetCountBtn.addEventListener('click', resetCurrentDhikr);
-    elements.copyDhikrBtn.addEventListener('click', copyCurrentDhikr);
-    elements.openListModalBtn.addEventListener('click', openListModal);
 
-    // واجهة المسبحة الحرة
     elements.masbahaCounterBtn.addEventListener('click', handleMasbahaCounterTap);
     elements.masbahaUndoBtn.addEventListener('click', undoMasbaha);
     elements.masbahaResetBtn.addEventListener('click', resetMasbaha);
 
-    // نافذة الفهرس
-    elements.closeModalBtn.addEventListener('click', closeListModal);
-    elements.listModalBackdrop.addEventListener('click', (e) => {
-      if (e.target === elements.listModalBackdrop) closeListModal();
-    });
-
-    // لوحة المفاتيح
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('resize', createBeadsRing);
   }
 
   function init() {
     loadPersistedState();
+    renderHijriDate();
+    updateRamadanCountdown();
+    setInterval(updateRamadanCountdown, 60000);
     renderCategoriesTabs();
     initMasbahaPresets();
+    createBeadsRing();
     renderCurrentView();
     bindEvents();
   }
 
-  // انطلاق التطبيق فور جاهزية الصفحة
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
